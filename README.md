@@ -1,2 +1,2 @@
 # mb
-meta package
+meta package which has basic package and extra functions
