@@ -5,7 +5,7 @@ from setuptools import setup,find_namespace_packages
 from mb.version import version
 
 setup(
-    name="mb",
+    name="mb_base",
     version=version,
     description="Meta Package for mb_* packages",
     author=["Malav Bateriwala"],
