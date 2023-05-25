@@ -7,3 +7,6 @@ meta package which has basic package and extra functions
 3. mb_utils
 4. numpy #mb_numpy still not added.
 
+# install
+
+    pip install mb_base
