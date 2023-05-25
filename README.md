@@ -5,3 +5,5 @@ meta package which has basic package and extra functions
 1. mb_pandas
 2. mb_sql
 3. mb_utils
+4. numpy #mb_numpy still not added.
+
