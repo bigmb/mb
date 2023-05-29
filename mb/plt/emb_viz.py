@@ -132,7 +132,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     elif viz_type=='tf' and target_column:
         
         ##check from here
-        log_dir = 'tp_logs'
+        log_dir = './tp_logs'
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
             
@@ -162,7 +162,6 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
             f.write(str(config))
         
         if logger:
-            logger.info('Saved sprite image to {}'.format(loc_sprite_image))
             logger.info('Run tensorboard --logdir={} to view embeddings'.format(log_dir))
             logger.info('if on jupyter notebook, run below code to view embeddings in notebook')
             logger.info('%load_ext tensorboard')

@@ -1,0 +1,4 @@
+embeddings {
+  metadata_path: "tp_logs/labels_tf.tsv"
+  tensor_path: "tp_logs/emb_data_tf.tsv"
+}
