@@ -14,7 +14,7 @@ setup(
     install_requires=[
         "umap",
         "pandas",
-        "sklearn",
+        "scikit-learn",
         "mb_pandas",
         "mb_utils",
         "mb_sql"],

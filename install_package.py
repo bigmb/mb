@@ -20,9 +20,9 @@ subprocess.run(["git", "commit", "-am", "Bug fix commit"], check=True, stdout=su
 
 print('git commit done')
 
-subprocess.run(["git", "pull"], check=True, stdout=subprocess.PIPE).stdout
-print('git pull done')
-print('*'*100)
+#subprocess.run(["git", "pull"], check=True, stdout=subprocess.PIPE).stdout
+#print('git pull done')
+#print('*'*100)
 
 subprocess.run(["git", "push"], check=True, stdout=subprocess.PIPE).stdout
 print('*'*100)
