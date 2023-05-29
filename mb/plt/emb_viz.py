@@ -48,7 +48,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
         temp_res = list(pca_emb)
     
     if emb_type=='tsne':
-        tsne = TSNE(n_components=dim, verbose=1, perplexity=35, n_iter=250, **kwargs)
+        tsne = TSNE(n_components=dim, verbose=1, perplexity=30, n_iter=250, **kwargs)
         df[emb] = df[emb].apply(lambda x: np.array(x))
         k1 = np.vstack(df[emb])
         tsne_emb = tsne.fit_transform(k1)
