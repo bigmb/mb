@@ -100,7 +100,6 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     assert emb_column in df.columns, 'Embedding column not found in dataframe'
     
     emb_data = np.concatenate(np.array(df[emb_column]))
-    print(emb_data.shape)
     emb_data = emb_data.reshape(-1,2) #change this for 3d
     if logger:
         logger.info('Embedding data shape {}'.format(str(emb_data.shape)))
@@ -112,7 +111,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         
     # Visualize the embeddings using a scatter plot
     if viz_type=='plt' and target_column:
-        plt.scatter(emb_data[:, 0], emb_data[:, 1], c=target_data, cmap='Spectral')
+        plt.scatter(emb_data[:, 0], emb_data[:, 1], c=target_data, cmap='viridis')
         plt.show()
         if file_save:
             plt.savefig(file_save)
