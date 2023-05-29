@@ -92,9 +92,11 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         if logger:
             logger.info('Type of df :{}'.format(str(type(df))))
         df = pd.load_any_df(df)
-    emb_data = np.array(df[emb_column])
     
     assert emb_column in df.columns, 'Embedding column not found in dataframe'
+    
+    emb_data = np.concatenate(np.array(df[emb_column]))
+    emb_data = emb_data.reshape(-1,2) #change this for 3d
     
     if target_column:
         target_data = list(df[target_column])
