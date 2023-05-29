@@ -7,7 +7,6 @@ from sklearn.preprocessing import LabelEncoder
 import umap
 from matplotlib import pyplot as plt
 import tensorflow as tf
-from tensorboard.plugins import projector
 import os
 import numpy as np
 
@@ -51,7 +50,8 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     if emb_type=='tsne':
         tsne = TSNE(n_components=dim, verbose=1, perplexity=35, n_iter=250, **kwargs)
         df[emb] = df[emb].apply(lambda x: np.array(x))
-        tsne_emb = tsne.fit_transform(np.array(df[emb]))
+        k1 = np.vstack(df[emb])
+        tsne_emb = tsne.fit_transform(k1)
         if logger:
             logger.info('First TSNE transform result : {}'.format(str(tsne_emb[0])))
         temp_res = list(tsne_emb)
