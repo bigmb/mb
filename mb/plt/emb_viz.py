@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 import umap
 from matplotlib import pyplot as plt
 import tensorflow as tf
+from tensorboard.plugins import projector
 import os
 import numpy as np
 
@@ -130,35 +131,38 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
 
     elif viz_type=='tf' and target_column:
         
-        emb_data = np.array(emb_data)
-        np.savetxt('emb_data_tf.tsv', emb_data, delimiter='\t')
-        
-        target_data = np.array(target_data)
-        np.savetxt('labels_tf.tsv',target_data,delimiter='\t')
-        
-        if image_tb is not None:
-            generate_sprite_images(df[image_tb], file_save=None, img_size=28 ,logger=None)
-            SPRITE_PATH = './sprite_image.png'
-        
         ##check from here
-        log_dir = 'logs'
+        log_dir = 'tp_logs'
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
+            
+        emb_data = np.array(emb_data)
+        loc_emb_data = os.path.join(log_dir,'emb_data_tf.tsv')
+        np.savetxt(loc_emb_data, emb_data, delimiter='\t')
+        
+        target_data = np.array(target_data)
+        loc_target_data = os.path.join(log_dir,'labels_tf.tsv')
+        np.savetxt(loc_target_data,target_data,delimiter='\t')
+        
+        if image_tb is not None:
+            loc_sprite_image = os.path.join(log_dir,'sprite_image.png')
+            generate_sprite_images(df[image_tb], file_save=loc_sprite_image, img_size=28 ,logger=None)        
         
         from tensorboard.plugins import projector
         
-        config = tf.summary.create_file_writer(log_dir)
+        config = projector.ProjectorConfig()
         embedding = config.embeddings.add()
-        embedding.tensor_path = 'emb_data_tf.tsv'
-        embedding.metadata_path = 'labels_tf.tsv'
-        embedding.sprite.image_path = 'sprite_image.png'
-        embedding.sprite.single_image_dim.extend([32, 32])
+        embedding.tensor_path = loc_emb_data
+        embedding.metadata_path = loc_target_data
+        if image_tb is not None:
+            embedding.sprite.image_path = loc_sprite_image
+            embedding.sprite.single_image_dim.extend([32, 32])
 
         with open(os.path.join(log_dir, 'projector_config.pbtxt'), 'w') as f:
             f.write(str(config))
         
         if logger:
-            logger.info('Saved sprite image to {}'.format(SPRITE_PATH))
+            logger.info('Saved sprite image to {}'.format(loc_sprite_image))
             logger.info('Run tensorboard --logdir={} to view embeddings'.format(log_dir))
             logger.info('if on jupyter notebook, run below code to view embeddings in notebook')
             logger.info('%load_ext tensorboard')
