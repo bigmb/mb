@@ -72,7 +72,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     
     return df
 
-def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',image_tb=None , file_save=None, logger=None):
+def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',limit = None,image_tb=None , file_save=None, logger=None):
     """
     Vizualize embeddings in 2d or 3d with tf projector and plotly
     
@@ -81,6 +81,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         emb_column (str): name of embedding column
         target_column (str): name of target column. It can be used to color the embeddings. Defaults to 'taxcode'. Can be None too.
         viz_type (str, optional): visualization type: 'plt' or 'tf'. Defaults to 'plt'.
+        limit (int, optional): limit number of data points to visualize. Takes random samples. Defaults to None.
         image_tb (str, optional): image location column to be used in tensorboard projector if want to create with images. Defaults to None.
         file_save (str, optional): file location to save plot. If viz_type='tf', then it wont be saved. Defaults to None.
         logger (logger, optional): logger object. Defaults to None.
@@ -93,10 +94,15 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
             logger.info('Type of df :{}'.format(str(type(df))))
         df = pd.load_any_df(df)
     
+    if limit:
+        df = df.sample(limit)
+    
     assert emb_column in df.columns, 'Embedding column not found in dataframe'
     
     emb_data = np.concatenate(np.array(df[emb_column]))
     emb_data = emb_data.reshape(-1,2) #change this for 3d
+    if logger:
+        logger.info('Embedding data shape {}'.format(str(emb_data.shape)))
     
     if target_column:
         target_data = list(df[target_column])
