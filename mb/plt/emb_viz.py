@@ -28,6 +28,8 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     """
     
     if type(df) is not pd.DataFrame:
+        if logger:
+            logger.info('Type of df :{}'.format(str(type(df))))
         df = pd.load_any_df(df)
         if logger:
             logger.info('Loaded dataframe from path {}'.format(str(df)))
@@ -86,7 +88,9 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         None
     """
     
-    if type(df) is not pd.DataFrame:
+    if type(df) != pd.DataFrame:
+        if logger:
+            logger.info('Type of df :{}'.format(str(type(df))))
         df = pd.load_any_df(df)
     emb_data = list(df[emb_column])
     
