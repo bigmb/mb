@@ -147,8 +147,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         
         from tensorboard.plugins import projector
         
-        config = tf.summary_v1.ProjectorConfig()
-
+        config = tf.summary.create_file_writer(log_dir)
         embedding = config.embeddings.add()
         embedding.tensor_path = 'emb_data_tf.tsv'
         embedding.metadata_path = 'labels_tf.tsv'
