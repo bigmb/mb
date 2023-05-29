@@ -50,8 +50,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     
     if emb_type=='tsne':
         tsne = TSNE(n_components=dim, verbose=1, perplexity=35, n_iter=250, **kwargs)
-        if type(df[emb].iloc[0]) is not np.ndarray:
-            df[emb] = df[emb].apply(lambda x: np.array(x))
+        df[emb] = df[emb].apply(lambda x: np.array(x))
         tsne_emb = tsne.fit_transform(np.array(df[emb]))
         if logger:
             logger.info('First TSNE transform result : {}'.format(str(tsne_emb[0])))
