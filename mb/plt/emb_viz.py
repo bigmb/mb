@@ -9,7 +9,7 @@ import tensorflow as tf
 import os
 import numpy as np
 
-__all__ = ['get_emb','viz_emb']
+__all__ = ['get_emb','viz_emb','generate_sprite_images']
 
 
 def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_original_emb=False,file_save=None, logger=None,**kwargs):
@@ -70,7 +70,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     
     return df
 
-def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', view_dim=2, viz_type ='plt',image_tb=None , file_save=None, logger=None):
+def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',image_tb=None , file_save=None, logger=None):
     """
     Vizualize embeddings in 2d or 3d with tf projector and plotly
     
@@ -78,7 +78,6 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         df (pd.DataFrame): dataframe containing embeddings. File location or DataFrame object.
         emb_column (str): name of embedding column
         target_column (str): name of target column. It can be used to color the embeddings. Defaults to 'taxcode'. Can be None too.
-        view_dim (int, optional): embedding dimension: 2 or 3 dim. Defaults to 2.if viz_type='tf', then it can be 2/3.
         viz_type (str, optional): visualization type: 'plt' or 'tf'. Defaults to 'plt'.
         image_tb (str, optional): image location column to be used in tensorboard projector if want to create with images. Defaults to None.
         file_save (str, optional): file location to save plot. If viz_type='tf', then it wont be saved. Defaults to None.
@@ -111,8 +110,40 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
             plt.savefig(file_save)
         
     elif viz_type=='tf' and target_column:
+        
+        emb_data = np.array(emb_data)
+        np.savetxt('emb_res.tsv', emb_data, delimiter='\t')
+        
+        target_data.to_csv('labels.tsv',index=False,header=False,sep='\t')
+        
+        if image_tb is not None:
+            generate_sprite_images(df[image_tb], file_save=None, img_size=28 ,logger=None)
+            SPRITE_PATH = './sprite_image.png'
+        
+        ##check from here
+        log_dir = 'logs'
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+        
         from tensorboard.plugins import projector
-        run_tb(df ,emb_column, target_column,log_dir='./logs', with_images=False, img_size=28 ,sprite_path=None, logger=None)
+        
+        config = tf.summary_v1.ProjectorConfig()
+
+        embedding = config.embeddings.add()
+        embedding.tensor_path = 'emb_res.tsv'
+        embedding.metadata_path = 'labels.tsv'
+        embedding.sprite.image_path = 'sprite_image.png'
+        embedding.sprite.single_image_dim.extend([32, 32])
+
+        with open(os.path.join(log_dir, 'projector_config.pbtxt'), 'w') as f:
+            f.write(str(config))
+        
+        if logger:
+            logger.info('Saved sprite image to {}'.format(SPRITE_PATH))
+            logger.info('Run tensorboard --logdir={} to view embeddings'.format(log_dir))
+            logger.info('if on jupyter notebook, run below code to view embeddings in notebook')
+            logger.info('%load_ext tensorboard')
+            logger.info('%tensorboard --logdir={}'.format(log_dir))
 
     
 def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None):
@@ -145,47 +176,3 @@ def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None)
         
     return sprite_image
     
-    
-    
-def run_tb(df ,embeddings= 'embeddings',labels='taxcode',log_dir= './log_dir', with_images=None, img_size=28 ,sprite_path=None, logger=None):
-    """
-    Running tensorboard projector to visualize embeddings from a pd.DataFrame
-    
-    Args:
-        df (pd.DataFrame): dataframe containing embeddings. File location or DataFrame object.
-        embeddings (str): embedding column in df
-        labels (str, optional): label column in df
-        log_dir (str, optional): log directory to save embeddings
-        with_images (str, optional): image columns in df. Defaults to None.
-        img_size (int, optional): image size. Defaults to 28.
-        sprite_path (str, optional): file location to save sprite image. Defaults to None. Will save in current directory.
-        logger (logger, optional): logger object. Defaults to None.
-    Returns:
-        None. Saves embeddings, metadata, sprite image and projector config in log_dir.    
-    """
-    
-    
-    from tensorboard.plugins import projector
-    config = projector.ProjectorConfig()
-    embedding = config.embeddings.add()
-    embedding.tensor_name = 'embeddings'
-    projector.visualize_embeddings(log_dir, config)
-
-
-    if with_images is not None: # If we have images, add sprite image
-        assert sprite_path is not None, 'Please provide sprite image path'
-        
-        embedding.sprite.image_path = sprite_path
-        embedding.sprite.single_image_dim.extend([img_size, img_size])
-        SPRITE_PATH, labels = generate_sprite_images(df['with_images'], file_save=sprite_path, logger=logger)
-
-    
-    
-    
-    if logger:
-        logger.info('Saved sprite image to {}'.format(SPRITE_PATH))
-        logger.info('Run tensorboard --logdir={} to view embeddings'.format(log_dir))
-        logger.info('if on jupyter notebook, run below code to view embeddings in notebook')
-        logger.info('%load_ext tensorboard')
-        logger.info('%tensorboard --logdir={}'.format(log_dir))
-        
