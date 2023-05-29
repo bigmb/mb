@@ -12,6 +12,9 @@ setup(
     packages=find_namespace_packages(include=["mb.*"]),
     scripts=[],
     install_requires=[
+        "umap",
+        "pandas",
+        "sklearn",
         "mb_pandas",
         "mb_utils",
         "mb_sql"],
