@@ -3,6 +3,7 @@
 from mb import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+from sklearn.preprocessing import LabelEncoder
 import umap
 from matplotlib import pyplot as plt
 import tensorflow as tf
@@ -106,6 +107,8 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     
     if target_column:
         target_data = list(df[target_column])
+        if type(target_data[0]) == str:
+            target_data = LabelEncoder().fit_transform(target_data)
         
     assert target_column==None or target_column in df.columns, 'Target column not found in dataframe'
         
