@@ -111,6 +111,9 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
             target_data = LabelEncoder().fit_transform(target_data)
         
     assert target_column==None or target_column in df.columns, 'Target column not found in dataframe'
+    
+    if file_save == None:
+        file_save = './emb_plot.png'
         
     # Visualize the embeddings using a scatter plot
     if viz_type=='plt' and target_column:
@@ -118,18 +121,20 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         plt.show()
         if file_save:
             plt.savefig(file_save)
+
     elif viz_type=='plt' and target_column==None:
-        plt.scatter(emb_data[:, 0], emb_data[:, 1], cmap='Spectral')
+        plt.scatter(emb_data[:, 0], emb_data[:, 1])
         plt.show()
         if file_save:
             plt.savefig(file_save)
-        
+
     elif viz_type=='tf' and target_column:
         
         emb_data = np.array(emb_data)
         np.savetxt('emb_res.tsv', emb_data, delimiter='\t')
         
-        target_data.to_csv('labels.tsv',index=False,header=False,sep='\t')
+        target_data = np.array(target_data)
+        np.savetxt('labels.tsv',target_data,sep='\t')
         
         if image_tb is not None:
             generate_sprite_images(df[image_tb], file_save=None, img_size=28 ,logger=None)
