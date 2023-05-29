@@ -12,7 +12,7 @@ setup(
     packages=find_namespace_packages(include=["mb.*"]),
     scripts=[],
     install_requires=[
-        "umap",
+        "umap-learn",
         "pandas",
         "scikit-learn",
         "mb_pandas",
