@@ -92,7 +92,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         if logger:
             logger.info('Type of df :{}'.format(str(type(df))))
         df = pd.load_any_df(df)
-    emb_data = list(df[emb_column])
+    emb_data = np.array(df[emb_column])
     
     assert emb_column in df.columns, 'Embedding column not found in dataframe'
     
