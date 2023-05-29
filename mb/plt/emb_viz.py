@@ -27,7 +27,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
         df (pd.DataFrame): dataframe containing embeddings. Original embedding column is dropped.
     """
     
-    if df is not pd.DataFrame:
+    if type(df) is not pd.DataFrame:
         df = pd.load_any_df(df)
         if logger:
             logger.info('Loaded dataframe from path {}'.format(str(df)))
@@ -86,7 +86,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         None
     """
     
-    if df is not pd.DataFrame:
+    if type(df) is not pd.DataFrame:
         df = pd.load_any_df(df)
     emb_data = list(df[emb_column])
     
@@ -159,7 +159,7 @@ def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None)
         sprite_image (np.array): sprite image
     """
     
-    if img_paths is not list:
+    if type(img_paths) is not list:
         img_paths = list(img_paths)
     
     #create sprite image
