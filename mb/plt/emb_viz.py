@@ -131,10 +131,10 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     elif viz_type=='tf' and target_column:
         
         emb_data = np.array(emb_data)
-        np.savetxt('emb_res.tsv', emb_data, delimiter='\t')
+        np.savetxt('emb_data_tf.tsv', emb_data, delimiter='\t')
         
         target_data = np.array(target_data)
-        np.savetxt('labels.tsv',target_data,sep='\t')
+        np.savetxt('labels_tf.tsv',target_data,delimiter='\t')
         
         if image_tb is not None:
             generate_sprite_images(df[image_tb], file_save=None, img_size=28 ,logger=None)
@@ -150,8 +150,8 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         config = tf.summary_v1.ProjectorConfig()
 
         embedding = config.embeddings.add()
-        embedding.tensor_path = 'emb_res.tsv'
-        embedding.metadata_path = 'labels.tsv'
+        embedding.tensor_path = 'emb_data_tf.tsv'
+        embedding.metadata_path = 'labels_tf.tsv'
         embedding.sprite.image_path = 'sprite_image.png'
         embedding.sprite.single_image_dim.extend([32, 32])
 
