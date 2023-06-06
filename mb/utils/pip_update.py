@@ -1,5 +1,5 @@
 import subprocess
-from mb.utils import logger
+from mb_utils.src.logging import logger
 
 __all__ = ['update_package']
 

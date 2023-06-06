@@ -4,7 +4,17 @@
 
 import os
 import subprocess
-file = '/home/malav/mb'
+import sys
+
+py_version = sys.version
+print(py_version)
+if py_version[:4] == '3.10':
+    py_requires = 'python3.10'
+else:
+    py_requires = 'python3.8'
+print(py_requires)
+
+file = os.getcwd() 
 
 
 #subprocess.run(["cd",file]), check=True, stdout=subprocess.PIPE).stdout
@@ -20,9 +30,9 @@ subprocess.run(["git", "commit", "-am", "Bug fix commit"], check=True, stdout=su
 
 print('git commit done')
 
-#subprocess.run(["git", "pull"], check=True, stdout=subprocess.PIPE).stdout
-#print('git pull done')
-#print('*'*100)
+subprocess.run(["git", "pull"], check=True, stdout=subprocess.PIPE).stdout
+print('git pull done')
+print('*'*100)
 
 subprocess.run(["git", "push"], check=True, stdout=subprocess.PIPE).stdout
 print('*'*100)
@@ -34,12 +44,12 @@ if os.path.exists(file+'/dist'):
 #subprocess.run(["ls"]),check=True, stdout=subprocess.PIPE).stdout
 os.system("ls")
 
-os.system('python3.8 -m setup bdist_wheel')
+os.system(py_requires + ' -m setup bdist_wheel')
 
 print('*'*100)
 print('wheel built')
-os.system('python3.8 -m pip install '+file + '/dist/' +os.listdir(file +'/dist')[-1])
+os.system(py_requires + ' -m pip install '+file + '/dist/' +os.listdir(file +'/dist')[-1])
 
 print('package installed')
 print('*'*100)
-os.system('python3.8 -m twine upload dist/*')
+os.system(py_requires + ' -m twine upload dist/*')
