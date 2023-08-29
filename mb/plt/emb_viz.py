@@ -75,7 +75,8 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     
     return df
 
-def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',limit = None,image_tb=None , file_save=None, logger=None):
+def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',limit = None,image_tb=None , file_save=None,
+            dont_viz=False, logger=None):
     """
     Vizualize embeddings in 2d or 3d with tf projector and plotly
     
@@ -87,6 +88,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         limit (int, optional): limit number of data points to visualize. Takes random samples. Defaults to None.
         image_tb (str, optional): image location column to be used in tensorboard projector if want to create with images. Defaults to None.
         file_save (str, optional): file location to save plot. If viz_type='tf', then it wont be saved. Defaults to None.
+        dont_viz (bool, optional): if True, then it wont visualize. Defaults to False.
         logger (logger, optional): logger object. Defaults to None.
     Output:
         None
@@ -120,13 +122,15 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     # Visualize the embeddings using a scatter plot
     if viz_type=='plt' and target_column:
         plt.scatter(emb_data[:, 0], emb_data[:, 1], c=target_data, cmap='viridis')
-        plt.show()
+        if dont_viz==False:
+            plt.show()
         if file_save:
             plt.savefig(file_save)
 
     elif viz_type=='plt' and target_column==None:
         plt.scatter(emb_data[:, 0], emb_data[:, 1])
-        plt.show()
+        if dont_viz==False:
+            plt.show()
         if file_save:
             plt.savefig(file_save)
 
