@@ -197,9 +197,9 @@ def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None)
     sprite_image = np.concatenate(images, axis=1)
     
     if file_save:
-        sprite_image.save(file_save)
+        np.save(file_save,sprite_image)
     else:
-        sprite_image.save('./sprite_image.png')
+        np.save('./sprite_image.png',sprite_image)
         
     return sprite_image
     
