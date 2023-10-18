@@ -198,8 +198,10 @@ def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None)
     
     if file_save:
         np.save(file_save,sprite_image)
+        tf.keras.utils.save_img(file_save,sprite_image)
     else:
-        np.save('./sprite_image.png',sprite_image)
+        np.save('./sprite_image',sprite_image)
+        tf.keras.utils.save_img('./sprite_image.png',sprite_image)
         
     return sprite_image
     
