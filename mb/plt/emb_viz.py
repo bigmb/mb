@@ -57,7 +57,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
         temp_res = list(tsne_emb)
     
     if emb_type=='umap':
-        umap_emb = umap.UMAP(n_neighbors=dim, min_dist=0.3, metric='correlation',**kwargs).fit_transform(list(df[emb]))
+        umap_emb = umap.UMAP(n_neighbors=dim, metric='correlation',**kwargs).fit_transform(list(df[emb]))
         if logger:
             logger.info('First UMAP transform result : {}'.format(str(umap_emb[0])))
         temp_res = list(umap_emb)
