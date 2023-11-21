@@ -6,7 +6,6 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import LabelEncoder
 import umap
 from matplotlib import pyplot as plt
-import tensorflow as tf
 import os
 import numpy as np
 
@@ -57,7 +56,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
         temp_res = list(tsne_emb)
     
     if emb_type=='umap':
-        umap_emb = umap.UMAP(n_neighbors=dim, metric='correlation',**kwargs).fit_transform(list(df[emb]))
+        umap_emb = umap.UMAP(n_neighbors=dim,**kwargs).fit_transform(list(df[emb]))
         if logger:
             logger.info('First UMAP transform result : {}'.format(str(umap_emb[0])))
         temp_res = list(umap_emb)
@@ -185,7 +184,8 @@ def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None)
     Output:
         sprite_image (np.array): sprite image
     """
-    
+    import tensorflow as tf
+
     if type(img_paths) is not list:
         img_paths = list(img_paths)
     
