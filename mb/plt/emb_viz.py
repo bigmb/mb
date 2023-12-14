@@ -121,7 +121,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     # Visualize the embeddings using a scatter plot
     if viz_type=='plt' and target_column:
         plt.scatter(emb_data[:, 0], emb_data[:, 1], c=target_data, cmap='viridis')
-        plt.legend()
+        #plt.legend()
         if dont_viz==False:
             plt.show()
         if file_save:
@@ -129,7 +129,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
 
     elif viz_type=='plt' and target_column==None:
         plt.scatter(emb_data[:, 0], emb_data[:, 1])
-        plt.legend()
+        #plt.legend()
         if dont_viz==False:
             plt.show()
         if file_save:
