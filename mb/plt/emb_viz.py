@@ -125,7 +125,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         if dont_viz==False:
             plt.show()
         if file_save:
-            plt.savefig(file_save+'./emb_plot.png')
+            plt.savefig(file_save+'/emb_plot.png')
 
     elif viz_type=='plt' and target_column==None:
         plt.scatter(emb_data[:, 0], emb_data[:, 1])
@@ -133,7 +133,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         if dont_viz==False:
             plt.show()
         if file_save:
-            plt.savefig(file_save+'./emb_plot.png')
+            plt.savefig(file_save+'/emb_plot.png')
 
     elif viz_type=='tf' and target_column:
         
