@@ -68,7 +68,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
             logger.info('Dropped original embedding column')
             
     if file_save:
-        df.to_csv(file_save,index=False)
+        df.to_csv(file_save + '/emb_res.csv',index=False)
     else:
         df.to_csv('./emb_res.csv',index=False)
     
@@ -101,7 +101,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     if limit:
         df = df.sample(limit)
     
-    # assert emb_column in df.columns, f'Embedding column not found in dataframe: {df.columns}'
+    assert emb_column in df.columns, f'Embedding column not found in dataframe: {df.columns}'
     
     emb_data = np.concatenate(np.array(df[emb_column]))
     emb_data = emb_data.reshape(-1,2) #change this for 3d
