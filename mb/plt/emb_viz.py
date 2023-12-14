@@ -102,7 +102,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     if limit:
         df = df.sample(limit)
     
-    assert emb_column in df.columns, 'Embedding column not found in dataframe'
+    assert emb_column in df.columns, 'Embedding column not found in dataframe: {df.columns}'
     
     emb_data = np.concatenate(np.array(df[emb_column]))
     emb_data = emb_data.reshape(-1,2) #change this for 3d
@@ -114,7 +114,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         if type(target_data[0]) == str:
             target_data = LabelEncoder().fit_transform(target_data)
         
-    assert target_column==None or target_column in df.columns, 'Target column not found in dataframe'
+    assert target_column==None or target_column in df.columns, 'Target column not found in dataframe : {df.columns}'
     
     if file_save == None:
         file_save = './emb_plot.png'
