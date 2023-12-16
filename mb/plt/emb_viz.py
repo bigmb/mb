@@ -8,7 +8,6 @@ import umap
 from matplotlib import pyplot as plt
 import os
 import numpy as np
-import plotly.express as px
 
 __all__ = ['get_emb','viz_emb','generate_sprite_images']
 
@@ -75,7 +74,7 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     
     return df
 
-def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',limit = None,image_tb=None , file_save=None,
+def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', viz_type ='plt',dash_viz=False,limit = None,image_tb=None , file_save=None,
             dont_viz=False, logger=None):
     """
     Vizualize embeddings in 2d or 3d with tf projector and plotly
@@ -85,6 +84,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         emb_column (str): name of embedding column
         target_column (str): name of target column. It can be used to color the embeddings. Defaults to 'taxcode'. Can be None too.
         viz_type (str, optional): visualization type: 'plt','pe' or 'tf'. Defaults to 'plt'.
+        dash_viz (bool, optional): if True, then it will create a dash app. Defaults to False.
         limit (int, optional): limit number of data points to visualize. Takes random samples. Defaults to None.
         image_tb (str, optional): image location column to be used in tensorboard projector if want to create with images. Defaults to None.
         file_save (str, optional): file location to save plot. If viz_type='tf', then it wont be saved. Defaults to None.
@@ -128,7 +128,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         if file_save:
             plt.savefig(file_save+'/emb_plot.png')
 
-    elif viz_type=='plt' and target_column==None:
+    elif viz_type=='plt' and target_column==None:       
         plt.scatter(emb_data[:, 0], emb_data[:, 1])
         #plt.legend()
         if dont_viz==False:
@@ -137,14 +137,62 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
             plt.savefig(file_save+'/emb_plot.png')
 
     elif viz_type=='pe' and target_column:
-        fig = px.scatter(x=emb_data[:, 0], y=emb_data[:, 1], color=target_data,    color_continuous_scale = 'rainbow',
-                        opacity = 0.3,
-                        title = f"Similarity to data visualised using dim reduction")
-        fig.update_layout(width = 650,height = 650)
-        if dont_viz==False:
-            fig.show()
-        if file_save:
-            fig.write_html(file_save+'/emb_plot.html',full_html=True)
+        
+        #importing plotly and dash
+        import plotly.express as px
+        
+        if dash_viz:
+            code = """
+            import dash
+            import dash_core_components as dcc
+            import dash_html_components as html
+            from dash.dependencies import Input, Output
+            import plotly.express as px
+
+            # Create the Dash app
+            app = dash.Dash(__name__)
+
+            # Define the layout of the app
+            df=pd.read_csv('./emb_res.csv')
+            df['emb_res_np'] = df['emb_res'].apply(lambda x:np.fromstring(x[1:-1],sep=' '))
+            emb_data = np.concatenate(np.array(df['emb_res_np']))
+            
+            app.layout = html.Div([
+            dcc.Graph(
+                id='scatter-plot',
+                figure=px.scatter(df , x=emb_data[:, 0], y=emb_data[:, 1], color=df['taxcode'], color_continuous_scale = 'rainbow'),
+                config={'staticPlot': False}),
+            html.Div(id='hover-data-output')])    
+
+            # Define a callback function for updating the hover data
+            @app.callback(Output('hover-data-output', 'children'),[Input('scatter-plot', 'hoverData')])
+        
+            def display_hover_data(hover_data):
+            if hover_data is None:
+                return ("Hover over a point to see data")
+            
+            # Extract data from hover_data
+            point_index = hover_data['points'][0]['pointIndex']
+            target_value = df.iloc[point_index]['target']
+            image_url = df.iloc[point_index]['after_image_url']
+
+            return f"Hovered over point {target_value}. Image URL: {image_url}"
+
+            # Run the app in the notebook
+            if __name__ == '__main__':
+                app.run_server(mode='inline', port=8923)   """
+            
+            with open(file_save + '/dash_app.py', 'w') as f:
+                f.write(code)    
+        
+        else:
+            fig = px.scatter(x=emb_data[:, 0], y=emb_data[:, 1], color=target_data,    color_continuous_scale = 'rainbow',
+                            title = f"Similarity to data visualised using dim reduction")
+            fig.update_layout(width = 650,height = 650)
+            if dont_viz==False:
+                fig.show()
+            if file_save:
+                fig.write_html(file_save+'/emb_plot.html',full_html=True)
 
     elif viz_type=='tf' and target_column:
         
