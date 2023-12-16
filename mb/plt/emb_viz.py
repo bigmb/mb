@@ -8,6 +8,7 @@ import umap
 from matplotlib import pyplot as plt
 import os
 import numpy as np
+import plotly.express as px
 
 __all__ = ['get_emb','viz_emb','generate_sprite_images']
 
@@ -83,7 +84,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         df (pd.DataFrame): dataframe containing embeddings. File location or DataFrame object.
         emb_column (str): name of embedding column
         target_column (str): name of target column. It can be used to color the embeddings. Defaults to 'taxcode'. Can be None too.
-        viz_type (str, optional): visualization type: 'plt' or 'tf'. Defaults to 'plt'.
+        viz_type (str, optional): visualization type: 'plt','pe' or 'tf'. Defaults to 'plt'.
         limit (int, optional): limit number of data points to visualize. Takes random samples. Defaults to None.
         image_tb (str, optional): image location column to be used in tensorboard projector if want to create with images. Defaults to None.
         file_save (str, optional): file location to save plot. If viz_type='tf', then it wont be saved. Defaults to None.
@@ -134,6 +135,16 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
             plt.show()
         if file_save:
             plt.savefig(file_save+'/emb_plot.png')
+
+    elif viz_type=='pe' and target_column:
+        fig = px.scatter(x=emb_data[:, 0], y=emb_data[:, 1], color=target_data,    color_continuous_scale = 'rainbow',
+                        opacity = 0.3,
+                        title = f"Similarity to data visualised using dim reduction")
+        fig.update_layout(width = 650,height = 650)
+        if dont_viz==False:
+            fig.show()
+        if file_save:
+            fig.write_html(file_save+'/emb_plot.html',full_html=True)
 
     elif viz_type=='tf' and target_column:
         
