@@ -143,44 +143,51 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
         
         if dash_viz:
             code = """
-            import dash
-            import dash_core_components as dcc
-            import dash_html_components as html
-            from dash.dependencies import Input, Output
-            import plotly.express as px
 
-            # Create the Dash app
-            app = dash.Dash(__name__)
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output
+import plotly.express as px
+import pandas as pd
+import numpy as np
 
-            # Define the layout of the app
-            df=pd.read_csv('./emb_res.csv')
-            df['emb_res_np'] = df['emb_res'].apply(lambda x:np.fromstring(x[1:-1],sep=' '))
-            emb_data = np.concatenate(np.array(df['emb_res_np']))
-            
-            app.layout = html.Div([
-            dcc.Graph(
-                id='scatter-plot',
-                figure=px.scatter(df , x=emb_data[:, 0], y=emb_data[:, 1], color=df['taxcode'], color_continuous_scale = 'rainbow'),
-                config={'staticPlot': False}),
-            html.Div(id='hover-data-output')])    
+# Create the Dash app
+app = dash.Dash(__name__)
 
-            # Define a callback function for updating the hover data
-            @app.callback(Output('hover-data-output', 'children'),[Input('scatter-plot', 'hoverData')])
-        
-            def display_hover_data(hover_data):
-            if hover_data is None:
-                return ("Hover over a point to see data")
-            
-            # Extract data from hover_data
-            point_index = hover_data['points'][0]['pointIndex']
-            target_value = df.iloc[point_index]['target']
-            image_url = df.iloc[point_index]['after_image_url']
+# Define the layout of the app
+df=pd.read_csv('./emb_res.csv')
+df['emb_res_np'] = df['emb_res'].apply(lambda x:np.fromstring(x[1:-1],sep=' '))
+#emb_data = np.concatenate(np.array(df['emb_res_np']))
+emb_data = np.array(df['emb_res_np'].tolist())  # Convert to 2D array
 
-            return f"Hovered over point {target_value}. Image URL: {image_url}"
 
-            # Run the app in the notebook
-            if __name__ == '__main__':
-                app.run_server(mode='inline', port=8923)   """
+app.layout = html.Div([
+    dcc.Graph(
+        id='scatter-plot',
+        figure=px.scatter(df , x=emb_data[:, 0], y=emb_data[:, 1], color=df['menu_code'], color_continuous_scale = 'rainbow'),
+        config={'staticPlot': False}),
+        html.Div([html.Img(id='selected-image', style={'width': '50%'}),
+        html.Div(id='hover-data-output')])])
+
+# Define a callback function for updating the hover data
+@app.callback([Output('hover-data-output', 'children'),Output('selected-image', 'src')],
+        [Input('scatter-plot', 'hoverData')])
+
+def display_hover_data(hover_data):
+    if hover_data is None:
+        return ("Hover over a point to see data")
+
+    # Extract data from hover_data
+    point_index = hover_data['points'][0]['pointIndex']
+    target_value = df.iloc[point_index]['event_id']
+    image_url = df.iloc[point_index]['after_image_url']
+
+    return f"Hovered over point {target_value}. Image URL: {image_url}",image_url
+
+# Run the app in the notebook
+if __name__ == '__main__':
+    app.run_server(mode='inline', port=8927,host='0.0.0.0')"""
             
             with open(file_save + '/dash_app.py', 'w') as f:
                 f.write(code)    
