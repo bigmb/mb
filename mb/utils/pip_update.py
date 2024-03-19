@@ -1,9 +1,9 @@
 import subprocess
-from mb_utils.src.logging import logger
+from typing import Optional
 
 __all__ = ['update_package']
 
-def update_package(package_name):
+def update_package(package_name, logger: Optional[str]=None) -> None:
     # Check if package is up-to-date
     result = subprocess.run(['pip', 'check', package_name], capture_output=True, text=True)
     if 'up-to-date' in result.stdout:

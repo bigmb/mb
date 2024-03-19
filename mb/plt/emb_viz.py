@@ -4,7 +4,6 @@ from mb import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import LabelEncoder
-import umap
 from matplotlib import pyplot as plt
 import os
 import numpy as np
@@ -56,6 +55,13 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
         temp_res = list(tsne_emb)
     
     if emb_type=='umap':
+        try:
+            import umap
+        except ImportError:
+            if logger:
+                logger.info('umap not installed, installing umap')
+            os.system('pip install umap-learn')
+            import umap
         umap_emb = umap.UMAP(n_components=2,**kwargs).fit_transform(list(df[emb]))
         if logger:
             logger.info('First UMAP transform result : {}'.format(str(umap_emb[0])))
