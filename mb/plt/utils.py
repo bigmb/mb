@@ -3,12 +3,13 @@ import numpy as np
 
 __all__ = ['dynamic_plt']
 
-def dynamic_plt(imgs: list,labels: list =None, num_cols: int = 2, figsize=(16, 12), return_fig: bool = False, show: bool = True):
+def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,num_cols: int = 2, figsize=(16, 12), return_fig: bool = False, show: bool = True):
     """
     Create dynamic plots based on the number of images and desired columns
     Args:
         imgs: List of images or paths to images
         labels: List of labels corresponding to the images (default: None)
+        bboxes: List of bounding boxes corresponding to the images (default: None)
         num_cols: Number of columns for the subplot grid (default: 2)
         figsize: Size of the figure (default: (16, 12))
         return_fig: Return the figure object (default: False)
@@ -36,6 +37,13 @@ def dynamic_plt(imgs: list,labels: list =None, num_cols: int = 2, figsize=(16, 1
         ax.axis('off')
         if labels:
             ax.set_title(str(labels[i]))
+
+        if bboxes:
+            img_bboxes = bboxes[i]
+            for bbox in img_bboxes:
+                rect = plt.Rectangle((bbox[0], bbox[1]), bbox[2], bbox[3], 
+                                     fill=False, edgecolor='red', linewidth=2)
+                ax.add_patch(rect)
 
     # Remove any unused subplots
     for j in range(num_images, num_rows * num_cols):
