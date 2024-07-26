@@ -33,6 +33,8 @@ def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,num_cols: int
         row = i // num_cols
         col = i % num_cols
         ax = axes[row, col]
+        if img.shape[0]==3:
+            img = np.moveaxis(img, 0, -1)
         ax.imshow(img)
         ax.axis('off')
         if labels:
