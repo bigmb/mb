@@ -14,7 +14,6 @@ setup(
     packages=find_namespace_packages(include=["mb.*"]),
     #packages=find_packages(),
     install_requires=[
-        "mb_base",
         "mb_utils",
         "mb_pandas",],
     setup_requires=["setuptools-git-versioning<2"],
