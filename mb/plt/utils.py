@@ -3,7 +3,7 @@ import numpy as np
 
 __all__ = ['dynamic_plt']
 
-def dynamic_plt(imgs: list,labels: list =None, num_cols: int = 2, figsize=(16, 12)):
+def dynamic_plt(imgs: list,labels: list =None, num_cols: int = 2, figsize=(16, 12), return_fig: bool = False):
     """
     Create dynamic plots based on the number of images and desired columns
     Args:
@@ -11,6 +11,7 @@ def dynamic_plt(imgs: list,labels: list =None, num_cols: int = 2, figsize=(16, 1
         labels: List of labels corresponding to the images (default: None)
         num_cols: Number of columns for the subplot grid (default: 2)
         figsize: Size of the figure (default: (16, 12))
+        return_fig: Return the figure object (default: False)
     Return:
         None
     """
@@ -43,3 +44,5 @@ def dynamic_plt(imgs: list,labels: list =None, num_cols: int = 2, figsize=(16, 1
     
     plt.tight_layout()
     plt.show()
+    if return_fig:
+        return fig
