@@ -3,13 +3,14 @@ import numpy as np
 
 __all__ = ['dynamic_plt']
 
-def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,num_cols: int = 2, figsize=(16, 12), return_fig: bool = False, show: bool = True):
+def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,bboxes_label: list = None,num_cols: int = 2, figsize=(16, 12), return_fig: bool = False, show: bool = True):
     """
     Create dynamic plots based on the number of images and desired columns
     Args:
         imgs: List of images or paths to images
         labels: List of labels corresponding to the images (default: None)
         bboxes: List of bounding boxes corresponding to the images (default: None)
+        bboxes_label : List of labels corresponding to the bounding boxes (default: None) (Fontsize=12)
         num_cols: Number of columns for the subplot grid (default: 2)
         figsize: Size of the figure (default: (16, 12))
         return_fig: Return the figure object (default: False)
@@ -42,10 +43,19 @@ def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,num_cols: int
 
         if bboxes:
             img_bboxes = bboxes[i]
-            for bbox in img_bboxes:
+            if bboxes_label:
+                img_labels = bboxes_label[i]
+            else:
+                img_labels = None
+            for bbox_val, bbox in enumerate(img_bboxes):
                 rect = plt.Rectangle((bbox[0], bbox[1]), bbox[2], bbox[3], 
                                      fill=False, edgecolor='red', linewidth=2)
                 ax.add_patch(rect)
+                if img_labels:
+                    try:
+                        ax.text(bbox[0], bbox[1], img_labels[bbox_val], color='red', fontsize=12)
+                    except:
+                        pass
 
     # Remove any unused subplots
     for j in range(num_images, num_rows * num_cols):
