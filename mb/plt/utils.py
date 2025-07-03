@@ -3,7 +3,9 @@ import numpy as np
 
 __all__ = ['dynamic_plt']
 
-def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,bboxes_label: list = None,num_cols: int = 2, figsize=(16, 12), return_fig: bool = False, show: bool = True):
+def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,
+bboxes_label: list = None,num_cols: int = 2, figsize=(16, 12), 
+return_fig: bool = False, show: bool = True, save_path: str = None):
     """
     Create dynamic plots based on the number of images and desired columns
     Args:
@@ -15,6 +17,7 @@ def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,bboxes_label:
         figsize: Size of the figure (default: (16, 12))
         return_fig: Return the figure object (default: False)
         show: Show the plot (default: True)
+        save_path: Path to save the plot (default: None)
     Return:
         None
     """
@@ -64,6 +67,8 @@ def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,bboxes_label:
         fig.delaxes(axes[row, col])
     
     plt.tight_layout()
+    if save_path:
+        plt.savefig(save_path)
     if show:    
         plt.show()
     if return_fig:
