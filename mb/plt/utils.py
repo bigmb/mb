@@ -1,11 +1,12 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor
 
 __all__ = ['dynamic_plt']
 
 def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,
-bboxes_label: list = None,num_cols: int = 2, figsize=(16, 12), 
-return_fig: bool = False, show: bool = True, save_path: str = None):
+    bboxes_label: list = None,num_cols: int = 2, figsize=(16, 12), 
+    return_fig: bool = False, show: bool = True, save_path: str = None):
     """
     Create dynamic plots based on the number of images and desired columns
     Args:
@@ -21,9 +22,10 @@ return_fig: bool = False, show: bool = True, save_path: str = None):
     Return:
         None
     """
-    if isinstance(imgs[0], str):
-        imgs = [plt.imread(i) for i in imgs]
     
+    with ThreadPoolExecutor() as executor:
+        imgs = list(executor.map(lambda x: plt.imread(x) if isinstance(x, str) else x, imgs))
+
     num_images = len(imgs)
     num_rows = int(np.ceil(num_images / num_cols))
     
