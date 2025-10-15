@@ -15,7 +15,7 @@ else:
 
 file = os.getcwd() 
 
-
+print("Python used:", py_requires)
 #subprocess.run(["cd",file]), check=True, stdout=subprocess.PIPE).stdout
 os.system('cd ' + file)
 
