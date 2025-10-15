@@ -11,7 +11,7 @@ import shutil
 if sys.version_info[:2] in [(3, 9), (3, 10), (3, 11), (3, 12), (3, 13), (3, 14)]:
     py_requires = f"python{sys.version_info.major}.{sys.version_info.minor}"
 else:
-    py_requires = "python3.8"
+    py_requires = "python3.11"
 
 file = os.getcwd() 
 
