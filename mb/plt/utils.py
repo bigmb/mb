@@ -6,7 +6,8 @@ __all__ = ['dynamic_plt']
 
 def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,
     bboxes_label: list = None,num_cols: int = 2, figsize=(16, 12), 
-    return_fig: bool = False, show: bool = True, save_path: str = None):
+    return_fig: bool = False, show: bool = True, save_path: str = None,
+    max_workers: int = 4):
     """
     Create dynamic plots based on the number of images and desired columns
     Args:
@@ -19,11 +20,12 @@ def dynamic_plt(imgs: list,labels: list =None, bboxes: list =None ,
         return_fig: Return the figure object (default: False)
         show: Show the plot (default: True)
         save_path: Path to save the plot (default: None)
+        max_workers: Maximum number of threads to use for loading images (default: 4)
     Return:
         None
     """
-    
-    with ThreadPoolExecutor() as executor:
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
         imgs = list(executor.map(lambda x: plt.imread(x) if isinstance(x, str) else x, imgs))
 
     num_images = len(imgs)
