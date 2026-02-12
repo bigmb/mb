@@ -7,6 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 from matplotlib import pyplot as plt
 import os
 import numpy as np
+from mb.utils.logging import logg
 
 __all__ = ['get_emb','viz_emb','generate_sprite_images']
 
@@ -27,22 +28,18 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
     """
     
     if type(df) is not pd.DataFrame:
-        if logger:
-            logger.info('Type of df :{}'.format(str(type(df))))
+        logg.info('Type of df :{}'.format(str(type(df))),logger=logger)
         df = pd.load_any_df(df)
-        if logger:
-            logger.info('Loaded dataframe from path {}'.format(str(df)))
+        logg.info('Loaded dataframe from path {}'.format(str(df)),logger=logger)
     
-    if logger:
-        logger.info('Data shape {}'.format(str(df.shape)))
-        logger.info('Data columns {}'.format(str(df.columns)))
-        logger.info('Performing {} on {} embeddings'.format(emb_type,emb))
-    
+    logg.info('Data shape {}'.format(str(df.shape)),logger=logger)
+    logg.info('Data columns {}'.format(str(df.columns)),logger=logger)
+    logg.info('Performing {} on {} embeddings'.format(emb_type,emb),logger=logger)
+
     if emb_type=='pca':
         pca = PCA(n_components=dim)
         pca_emb = pca.fit_transform(list(df[emb]))
-        if logger:
-            logger.info('First PCA transform result : {}'.format(str(pca_emb[0])))
+        logg.info('First PCA transform result : {}'.format(str(pca_emb[0])),logger=logger)
         temp_res = list(pca_emb)
     
     if emb_type=='tsne':
@@ -50,28 +47,24 @@ def get_emb(df: pd.DataFrame, emb= 'embeddings', emb_type='umap', dim=2,keep_ori
         df[emb] = df[emb].apply(lambda x: np.array(x))
         k1 = np.vstack(df[emb])
         tsne_emb = tsne.fit_transform(k1)
-        if logger:
-            logger.info('First TSNE transform result : {}'.format(str(tsne_emb[0])))
+        logg.info('First TSNE transform result : {}'.format(str(tsne_emb[0])),logger=logger)
         temp_res = list(tsne_emb)
     
     if emb_type=='umap':
         try:
             import umap
         except ImportError:
-            if logger:
-                logger.info('umap not installed, installing umap')
+            logg.info('umap not installed, installing umap',logger=logger)
             os.system('pip install umap-learn')
             import umap
         umap_emb = umap.UMAP(n_components=2,**kwargs).fit_transform(list(df[emb]))
-        if logger:
-            logger.info('First UMAP transform result : {}'.format(str(umap_emb[0])))
+        logg.info('First UMAP transform result : {}'.format(str(umap_emb[0])),logger=logger)
         temp_res = list(umap_emb)
     
     df['emb_res'] = temp_res
     if keep_original_emb==False:
         df.drop(emb,axis=1,inplace=True)
-        if logger:
-            logger.info('Dropped original embedding column')
+        logg.info('Dropped original embedding column',logger=logger)
             
     if file_save:
         df.to_csv(file_save + '/emb_res.csv',index=False)
@@ -101,8 +94,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     """
     
     if type(df) != pd.DataFrame:
-        if logger:
-            logger.info('Type of df :{}'.format(str(type(df))))
+        logg.info('Type of df :{}'.format(str(type(df))),logger=logger)
         df = pd.load_any_df(df)
     
     if limit:
@@ -112,8 +104,7 @@ def viz_emb(df: pd.DataFrame, emb_column='emb_res' , target_column='taxcode', vi
     
     emb_data = np.concatenate(np.array(df[emb_column]))
     emb_data = emb_data.reshape(-1,2) #change this for 3d
-    if logger:
-        logger.info('Embedding data shape {}'.format(str(emb_data.shape)))
+    logg.info('Embedding data shape {}'.format(str(emb_data.shape)),logger=logger)
     
     if target_column:
         target_data = list(df[target_column])
@@ -224,7 +215,7 @@ if __name__ == '__main__':
         
         if image_tb is not None:
             loc_sprite_image = os.path.join(log_dir,'sprite_image.png')
-            generate_sprite_images(df[image_tb], file_save=loc_sprite_image, img_size=28 ,logger=None)        
+            generate_sprite_images(df[image_tb], file_save=loc_sprite_image, img_size=28 ,logger=logger)        
         
         from tensorboard.plugins import projector
         
@@ -239,11 +230,10 @@ if __name__ == '__main__':
         with open(os.path.join(log_dir, 'projector_config.pbtxt'), 'w') as f:
             f.write(str(config))
         
-        if logger:
-            logger.info('Run tensorboard --logdir={} to view embeddings'.format(log_dir))
-            logger.info('if on jupyter notebook, run below code to view embeddings in notebook')
-            logger.info('%load_ext tensorboard')
-            logger.info('%tensorboard --logdir={}'.format(log_dir))
+        logg.info('Run tensorboard --logdir={} to view embeddings'.format(log_dir),logger=logger)
+        logg.info('if on jupyter notebook, run below code to view embeddings in notebook',logger=logger)
+        logg.info('%load_ext tensorboard',logger=logger)
+        logg.info('%tensorboard --logdir={}'.format(log_dir),logger=logger)
 
     
 def generate_sprite_images(img_paths, file_save=None, img_size= 28 ,logger=None):
