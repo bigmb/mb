@@ -11,7 +11,9 @@ setup(
     name="mb_base",
     description="Meta Package for mb_* packages",
     author=["Malav Bateriwala"],
-    packages=find_namespace_packages(include=["mb.*"]),
+    # Include the top-level `mb` namespace package as well, so modules like
+    # `mb/version.py` are shipped (not just `mb.*` subpackages).
+    packages=find_namespace_packages(include=["mb", "mb.*"]),
     #packages=find_packages(),
     install_requires=[
         "mb_utils",
