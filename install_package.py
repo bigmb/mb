@@ -58,7 +58,9 @@
 
 
 import os
+import sys
 import subprocess
+import glob
 
 def install_package():
     subprocess.run(['./make_version.sh'], check=True)
@@ -83,15 +85,25 @@ def install_package():
     whl_files = [f for f in os.listdir('./dist') if f.endswith('.whl')]
     latest_file = sorted(whl_files)[-1] if whl_files else sorted(os.listdir('./dist'))[-1]
     print(f'Installing package file: {latest_file}')
-    try:
-        subprocess.run(['uv','pip', 'install', f'./dist/{latest_file}','--system', '--break-system-packages'], check=True)
-    except:
-        subprocess.run(['sudo','uv','pip', 'install', f'./dist/{latest_file}','--system', '--break-system-packages'], check=True)
+    prefix = os.environ.get('MB_UV_PREFIX', os.path.expanduser('~/.local'))
+    print(f'Installing into prefix: {prefix}')
+    subprocess.run(
+        [
+            'uv',
+            'pip',
+            'install',
+            f'./dist/{latest_file}',
+            '--python',
+            sys.executable,
+            '--prefix',
+            prefix,
+        ],
+        check=True,
+    )
         
 install_package()
 print('package installed')
 print('*'*100)
-import glob
 whl_files = glob.glob("dist/*.whl")
 subprocess.run(["uvx", "uv-publish"] + whl_files, check=True)
 
