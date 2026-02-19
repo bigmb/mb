@@ -1,2 +1,2 @@
-from mb_pandas import *
+from mb.pandas import *
 from pandas import *
